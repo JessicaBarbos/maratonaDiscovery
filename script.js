@@ -18,30 +18,30 @@ const transactions = [
         id: 1,
         description: 'Luz',
         amount: -50000,
-        date: '23/01/2021'  
+        date: '23/01/2021'
     },
     {
         id: 2,
         description: 'Website',
         amount: 500000,
-        date: '23/03/2021'  
+        date: '23/03/2021'
     },
     {
         id: 1,
         description: 'Internet',
         amount: -20000,
-        date: '23/02/2021'  
+        date: '23/02/2021'
     }
 ];
 
 const Transaction = {
-    incomes(){
+    incomes() {
         //somar as entradas
     },
-    expenses(){
+    expenses() {
         //somar as saídas
     },
-    total(){
+    total() {
         // entradas - saídas
     }
 };
@@ -56,8 +56,6 @@ const Utils = {
             style: "currency",
             currency: "BRL"
         });
-
-        console.log(value)
 
         return signal + value;
     }
@@ -86,10 +84,23 @@ const DOM = {
             </td>
         `
         return html;
+    },
+    updateBalance() {
+        document
+            .getElementById('incomeDisplay')
+            .innerHTML = "Soma das entradas"
+        document
+            .getElementById('expenseDisplay')
+            .innerHTML = "Soma das saídas"
+        document
+            .getElementById('totalDisplay')
+            .innerHTML = "Total"
     }
 
 };
 
-transactions.forEach(function(transaction){
+transactions.forEach(function (transaction) {
     DOM.addTransaction(transaction)
 });
+
+DOM.updateBalance()
