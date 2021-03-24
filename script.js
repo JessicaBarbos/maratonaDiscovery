@@ -49,6 +49,17 @@ const Transaction = {
 const Utils = {
     formatCurrency(value) {
         const signal = Number(value) < 0 ? "-" : "";
+
+        value = String(value).replace(/\D/g, "");
+        value = Number(value) / 100;
+        value = value.toLocaleString("pt-Br", {
+            style: "currency",
+            currency: "BRL"
+        });
+
+        console.log(value)
+
+        return signal + value;
     }
 };
 
@@ -77,7 +88,7 @@ const DOM = {
         return html;
     }
 
-}
+};
 
 transactions.forEach(function(transaction){
     DOM.addTransaction(transaction)
