@@ -13,32 +13,38 @@ const Modal = {
     }
 };
 
-const transactions = [
-    {
-        id: 1,
-        description: 'Luz',
-        amount: -50000,
-        date: '23/01/2021'
-    },
-    {
-        id: 2,
-        description: 'Website',
-        amount: 500000,
-        date: '23/03/2021'
-    },
-    {
-        id: 1,
-        description: 'Internet',
-        amount: -20000,
-        date: '23/02/2021'
-    }
-];
-
 const Transaction = {
+    all: [
+        {
+            description: 'Luz',
+            amount: -50000,
+            date: '23/01/2021'
+        },
+        {
+            description: 'Website',
+            amount: 500000,
+            date: '23/03/2021'
+        },
+        {
+            description: 'Internet',
+            amount: -20000,
+            date: '23/02/2021'
+        }
+    ],
+    add(transaction) {
+        Transaction.all.push(transaction);
+
+        App.reload();
+    },
+    remove(index) {
+        Transaction.all.splice(index, 1);
+        App.reload();
+
+    },
     incomes() {
         let income = 0;
-        transactions.forEach((transaction) => {
-            if (transaction.amount > 0){
+        Transaction.all.forEach((transaction) => {
+            if (transaction.amount > 0) {
                 income += transaction.amount;
             }
         });
@@ -46,8 +52,8 @@ const Transaction = {
     },
     expenses() {
         let expense = 0;
-        transactions.forEach((transaction) => {
-            if (transaction.amount < 0){
+        Transaction.all.forEach((transaction) => {
+            if (transaction.amount < 0) {
                 expense += transaction.amount;
             }
         });
@@ -70,6 +76,55 @@ const Utils = {
         });
 
         return signal + value;
+    }
+};
+
+const Form = {
+    description: document.querySelector("input#description"),
+    amount: document.querySelector("input#amount"),
+    date: document.querySelector("input#date"),
+
+    getValues() {
+        return {
+            description: Form.description.value,
+            amount: Form.amount.value,
+            date: Form.date.value
+        }
+    },
+    validateFields() {
+
+        const {description, amount, date} = Form.getValues();
+
+        if(description.trim() === "" || amount.trim() === "" || date.trim() === ""){
+            throw new Error("Por favor, preencha todos os campos");
+        }
+        console.log(Form.getValues())
+    },
+    formatData() {
+        console.log('formatar')
+    },
+    submit(event) {
+
+        event.preventDefault();
+
+        try{
+
+            Form.validateFields();
+
+            //formatar os dados para salvar
+            Form.formatData();
+
+            //salvar
+            //form seja limpo
+            //modal close
+            //atualizar aplication
+
+        }catch (error){
+            alert(error.message)
+        }
+
+  
+
     }
 };
 
@@ -107,12 +162,36 @@ const DOM = {
         document
             .getElementById('totalDisplay')
             .innerHTML = Utils.formatCurrency(Transaction.total())
+    },
+    clearTransactions() {
+        DOM.transactionsContainer.innerHTML = ""
     }
 
 };
 
-transactions.forEach(function (transaction) {
-    DOM.addTransaction(transaction)
+
+const App = {
+    init() {
+
+        Transaction.all.forEach(transaction => {
+            DOM.addTransaction(transaction)
+        })
+
+        DOM.updateBalance()
+    },
+    reload() {
+        DOM.clearTransactions();
+        App.init();
+
+    }
+};
+
+App.init();
+
+Transaction.add({
+    description: 'Mouse',
+    amount: 200,
+    date: '24/03/2021'
 });
 
-DOM.updateBalance()
+// Transaction.remove(2);
