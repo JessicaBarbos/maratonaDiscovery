@@ -65,6 +65,10 @@ const Transaction = {
 };
 
 const Utils = {
+    formatAmount(value) {
+        value = Number(value) * 100;
+        return value;
+    },
     formatCurrency(value) {
         const signal = Number(value) < 0 ? "-" : "";
 
@@ -76,6 +80,10 @@ const Utils = {
         });
 
         return signal + value;
+    },
+    formatDate(date) {
+        const splittedDate = date.split("-");
+        return `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`;
     }
 };
 
@@ -92,38 +100,43 @@ const Form = {
         }
     },
     validateFields() {
+        const { description, amount, date } = Form.getValues();
 
-        const {description, amount, date} = Form.getValues();
-
-        if(description.trim() === "" || amount.trim() === "" || date.trim() === ""){
+        if (description.trim() === "" || amount.trim() === "" || date.trim() === "") {
             throw new Error("Por favor, preencha todos os campos");
         }
-        console.log(Form.getValues())
     },
-    formatData() {
-        console.log('formatar')
+    formatValues() {
+        let { description, amount, date } = Form.getValues();
+        
+        amount = Utils.formatAmount(amount);
+        date = Utils.formatDate(date);
+
+        return {
+            description,
+            amount,
+            date
+        }
     },
     submit(event) {
 
         event.preventDefault();
 
-        try{
+        try {
 
             Form.validateFields();
-
-            //formatar os dados para salvar
-            Form.formatData();
+            Form.formatValues();
 
             //salvar
             //form seja limpo
             //modal close
             //atualizar aplication
 
-        }catch (error){
+        } catch (error) {
             alert(error.message)
         }
 
-  
+
 
     }
 };
