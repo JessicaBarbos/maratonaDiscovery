@@ -13,24 +13,19 @@ const Modal = {
     }
 };
 
+
+const Storage = {
+    get() { 
+       return JSON.parse(localStorage.getItem("dev.finances:transactions")) || []
+    },
+    set(transactions) {
+        localStorage.setItem("dev.finances:transactions", JSON.stringify(transactions));
+     }
+}
+
 const Transaction = {
-    all: [
-        {
-            description: 'Luz',
-            amount: -50000,
-            date: '23/01/2021'
-        },
-        {
-            description: 'Website',
-            amount: 500000,
-            date: '23/03/2021'
-        },
-        {
-            description: 'Internet',
-            amount: -20000,
-            date: '23/02/2021'
-        }
-    ],
+    all: Storage.get(),
+
     add(transaction) {
         Transaction.all.push(transaction);
 
@@ -66,7 +61,7 @@ const Transaction = {
 
 const Utils = {
     formatAmount(value) {
-        value = Number(value) * 100;
+        value = Number(value.replace(/\,\./g, "")) * 100;
         return value;
     },
     formatCurrency(value) {
@@ -88,15 +83,15 @@ const Utils = {
 };
 
 const Form = {
-    description: document.querySelector("input#description"),
-    amount: document.querySelector("input#amount"),
-    date: document.querySelector("input#date"),
+    description: document.querySelector('input#description'),
+    amount: document.getElementById('amount'),
+    date: document.getElementById('date'),
 
     getValues() {
         return {
             description: Form.description.value,
-            amount: Form.amount.value,
-            date: Form.date.value
+            amount: document.getElementById('amount').value,
+            date: document.getElementById('date').value
         }
     },
     validateFields() {
@@ -108,7 +103,7 @@ const Form = {
     },
     formatValues() {
         let { description, amount, date } = Form.getValues();
-        
+
         amount = Utils.formatAmount(amount);
         date = Utils.formatDate(date);
 
@@ -118,26 +113,28 @@ const Form = {
             date
         }
     },
+    saveTransaction(transaction) {
+        Transaction.add(transaction);
+    },
+    clearFields() {
+        Form.description.value = "";
+        Form.amount.value = "";
+        Form.date.value = "";
+    },
     submit(event) {
 
         event.preventDefault();
 
         try {
-
             Form.validateFields();
-            Form.formatValues();
-
-            //salvar
-            //form seja limpo
-            //modal close
-            //atualizar aplication
+            const transaction = Form.formatValues();
+            Form.saveTransaction(transaction);
+            Form.clearFields();
+            Modal.close();
 
         } catch (error) {
-            alert(error.message)
+            alert(error.message);
         }
-
-
-
     }
 };
 
@@ -146,13 +143,13 @@ const DOM = {
 
     addTransaction(transaction, index) {
         const tr = document.createElement('tr');
-        tr.innerHTML = DOM.innerHTMLTransaction(transaction);
+        tr.innerHTML = DOM.innerHTMLTransaction(transaction, index);
+        tr.dataset.index = index;
 
         DOM.transactionsContainer.appendChild(tr);
     },
-    innerHTMLTransaction(transaction) {
+    innerHTMLTransaction(transaction, index) {
         const CSSclass = transaction.amount > 0 ? "income" : "expense";
-
         const amount = Utils.formatCurrency(transaction.amount);
 
         const html = `
@@ -160,7 +157,7 @@ const DOM = {
             <td class="${CSSclass}">${amount}</td>
             <td class="date">${transaction.date}</td>
             <td>
-                <img src="./assets/minus.svg" alt="Remover transação">
+                <img src="./assets/minus.svg" alt="Remover transação" onclick="Transaction.remove(${index})">
             </td>
         `
         return html;
@@ -182,29 +179,21 @@ const DOM = {
 
 };
 
-
 const App = {
     init() {
 
-        Transaction.all.forEach(transaction => {
-            DOM.addTransaction(transaction)
+        Transaction.all.forEach((transaction, index) => {
+            DOM.addTransaction(transaction, index);
         })
 
         DOM.updateBalance()
+
+        Storage.set(Transaction.all);
     },
     reload() {
         DOM.clearTransactions();
         App.init();
-
     }
 };
 
 App.init();
-
-Transaction.add({
-    description: 'Mouse',
-    amount: 200,
-    date: '24/03/2021'
-});
-
-// Transaction.remove(2);
