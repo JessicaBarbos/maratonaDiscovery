@@ -13,10 +13,9 @@ const Modal = {
     }
 };
 
-
 const Storage = {
     get() { 
-       return JSON.parse(localStorage.getItem("dev.finances:transactions")) || []
+       return JSON.parse(localStorage.getItem("dev.finances:transactions")) || [];
     },
     set(transactions) {
         localStorage.setItem("dev.finances:transactions", JSON.stringify(transactions));
@@ -28,13 +27,11 @@ const Transaction = {
 
     add(transaction) {
         Transaction.all.push(transaction);
-
         App.reload();
     },
     remove(index) {
         Transaction.all.splice(index, 1);
         App.reload();
-
     },
     incomes() {
         let income = 0;
