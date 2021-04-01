@@ -6,6 +6,6 @@ Nesse projeto foi utilizado JS puro, nenhum framework foi utilizado para que pud
 
 Algo bem interessante tambem é a utilização do LocalStorage do próprio navegador.
 
-# https://controlefinanceiro.vercel.app/
+https://controlefinanceiro.vercel.app/
 
-#https://www.linkedin.com/in/jessicaremediobarbosa/
+https://www.linkedin.com/in/jessicaremediobarbosa/
